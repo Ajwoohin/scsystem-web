@@ -1,0 +1,24 @@
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1E2761;
+  font-family: Calibri, "Segoe UI", Arial, sans-serif;
+}
+
+.card {
+  background: #FFFFFF;
+  color: #1E2761;
+  width: 90%;
+  max-width: 420px;
+  padding: 32px 24px;
+  border-radius: 16px;
+  text-align: center;
+}
+
+h1 { margin: 0 0 8px; font-family: Cambria, Georgia, serif; }
+
+#status.ok  { color: #1a7f37; font-weight: bold; }
+#status.bad { color: #c62828; font-weight: bold; }
