@@ -38,7 +38,9 @@ export class SignUpForm {
     document.getElementById('termsLink').addEventListener('click', () => this.#terms.open());
 
     this.#agree.addEventListener('click', (event) => this.#onAgreeClick(event));
+    this.#fields.edp.addEventListener('input', () => this.#updateRoleHint());
     form.addEventListener('submit', (event) => this.#onSubmit(event));
+    this.#updateRoleHint();
 
     this.#updateSubmitState();
   }
@@ -81,14 +83,14 @@ export class SignUpForm {
 
     if (!v.edpNumber) {
       errors.edp = 'Please enter your EDP number.';
-    } else if (v.edpNumber === '000') {
-      errors.edp = 'Staff registration is not available on the website yet.';
     }
 
     if (!v.email) {
       errors.email = 'Please enter your institutional email.';
-    } else if (!Validator.isInstitutionalEmail(v.email)) {
-      errors.email = 'Please use a valid @sccpag.edu.ph institutional email.';
+    } else if (!Validator.isValidEmail(v.email)) {
+      errors.email = 'Please enter a valid email address.';
+    } else if (v.edpNumber !== '000' && !Validator.isInstitutionalEmail(v.email)) {
+      errors.email = 'Students must use a valid @sccpag.edu.ph institutional email.';
     }
 
     if (!v.password) {
@@ -151,17 +153,31 @@ export class SignUpForm {
       this.#message.hidden = false;
       return;
     }
-    this.#showSuccess(values.email, result.needsVerification);
+    this.#showSuccess(values.email, result.needsVerification, result.isStaff);
   }
 
-  #showSuccess(email, needsVerification) {
+  #updateRoleHint() {
+    const isStaff = this.#fields.edp.value.trim() === '000';
+    const emailLabel = document.querySelector('label[for="email"]');
+    const emailInput = this.#fields.email;
+    const emailHint = document.getElementById('emailHint');
+    emailLabel.textContent = isStaff ? 'Staff Email' : 'Institutional Email (@sccpag.edu.ph)';
+    emailInput.placeholder = isStaff ? 'your.email@example.com' : 'name@sccpag.edu.ph';
+    emailHint.textContent = isStaff
+      ? 'EDP 000 sends a staff registration request for administrator approval.'
+      : 'Students must use their @sccpag.edu.ph institutional email.';
+  }
+
+  #showSuccess(email, needsVerification, isStaff) {
     document.getElementById('formArea').hidden = true;
     document.getElementById('successTitle').textContent = needsVerification
       ? 'Verify your email'
-      : 'Account created';
+      : (isStaff ? 'Staff request submitted' : 'Account created');
     document.getElementById('successText').textContent = needsVerification
-      ? `We sent a confirmation link to ${email}. Open it, then come back and log in.`
-      : 'Your account is ready. You can log in now.';
+      ? `We sent a confirmation link to ${email}. Open it, then log in. ${isStaff ? 'Your staff account will still need administrator approval.' : ''}`
+      : (isStaff
+          ? 'Your staff account has been created and is waiting for administrator approval.'
+          : 'Your account is ready. You can log in now.');
     document.getElementById('successPanel').hidden = false;
   }
 }

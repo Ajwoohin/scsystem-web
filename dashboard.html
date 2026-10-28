@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SCsystem Dashboard</title>
+  <script>(function(){try{var s=localStorage.getItem('scsystem-theme');document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));}catch(e){}})();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+</head>
+<body class="dashboard-body">
+  <header class="app-topbar">
+    <a class="app-brand" href="dashboard.html"><span>SC</span>system</a>
+    <div class="top-actions">
+      <span id="roleBadge" class="role-badge">Connecting...</span>
+      <a class="btn btn-primary app-download-btn" href="downloads/SCsystem.apk" download="SCsystem.apk" aria-label="Download the SCsystem Android app">Download app now!</a>
+      <button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch to dark mode">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+      </button>
+      <button id="logoutBtn" class="btn btn-secondary logout-btn" type="button">Log Out</button>
+    </div>
+  </header>
+
+  <div class="app-shell">
+    <aside class="app-sidebar">
+      <div class="side-user">
+        <div id="sideAvatar" class="avatar avatar-small">SC</div>
+        <div><strong id="sideName">Loading profile</strong><small id="sideEmail">Loading account</small></div>
+      </div>
+      <nav class="side-nav" aria-label="Main navigation">
+        <button class="nav-link active" data-view-nav="overview"><span>⌂</span> Overview</button>
+        <button class="nav-link" data-view-nav="profile"><span>◉</span> My Profile</button>
+        <button class="nav-link" data-view-nav="buses"><span>▰</span> Bus Status <span id="busLiveDot" class="live-dot"></span></button>
+        <button class="nav-link" data-view-nav="announcements"><span>▤</span> Announcements</button>
+        <button class="nav-link" data-view-nav="quests"><span>☑</span> Quests</button>
+        <button class="nav-link" data-view-nav="staff-requests" data-role="admin"><span>♙</span> Staff Requests <span id="pendingStaffCount" class="nav-count" hidden>0</span></button>
+      </nav>
+      <div class="sidebar-footer"><span class="live-dot"></span> Supabase connected session</div>
+    </aside>
+
+    <main class="app-main">
+      <div id="flashMessage" class="flash-message" role="status" hidden></div>
+      <section class="view active" id="view-overview">
+        <div class="page-heading"><div><p class="eyebrow">SC COLUMBAN SYSTEM</p><h1 id="welcomeTitle">Welcome back</h1><p class="muted">Your campus activity, in one place.</p></div><span class="today-label" id="todayLabel"></span></div>
+        <div id="overviewContent" class="content-stack"><div class="loading-card">Loading your dashboard...</div></div>
+      </section>
+      <section class="view" id="view-profile" hidden>
+        <div class="page-heading"><div><p class="eyebrow">YOUR ACCOUNT</p><h1>My Profile</h1><p class="muted">Your SCsystem information and points.</p></div></div>
+        <div id="profileContent" class="content-stack"><div class="loading-card">Loading profile...</div></div>
+      </section>
+      <section class="view" id="view-buses" hidden>
+        <div class="page-heading"><div><p class="eyebrow">LIVE CAMPUS UPDATES</p><h1>Bus Status</h1><p class="muted">Status updates refresh when the mobile app changes them.</p></div><span class="status-live"><span class="live-dot"></span> Live</span></div>
+        <div id="busContent" class="content-stack"><div class="loading-card">Loading buses...</div></div>
+      </section>
+      <section class="view" id="view-announcements" hidden>
+        <div class="page-heading"><div><p class="eyebrow">CAMPUS BULLETIN</p><h1>Announcements</h1><p class="muted">News and club posts shared with the mobile app.</p></div><span class="status-live"><span class="live-dot"></span> Live</span></div>
+        <div id="announcementsContent" class="content-stack"><div class="loading-card">Loading announcements...</div></div>
+      </section>
+      <section class="view" id="view-quests" hidden>
+        <div class="page-heading"><div><p class="eyebrow">CAMPUS ENGAGEMENT</p><h1>Quests</h1><p class="muted">Join activities, submit proof, and track your progress.</p></div><span class="status-live"><span class="live-dot"></span> Live</span></div>
+        <div id="questsContent" class="content-stack"><div class="loading-card">Loading quests...</div></div>
+      </section>
+      <section class="view" id="view-staff-requests" hidden>
+        <div class="page-heading"><div><p class="eyebrow">ACCOUNT MANAGEMENT</p><h1>Staff Requests</h1><p class="muted">Approve or decline staff sign-ups that used EDP 000.</p></div></div>
+        <div id="staffRequestsContent" class="content-stack"><div class="loading-card">Loading staff requests...</div></div>
+      </section>
+      <footer class="dashboard-footer">SCsystem <span>•</span> Campus services and engagement</footer>
+    </main>
+  </div>
+  <script type="module" src="js/dashboard.js"></script>
+</body>
+</html>
