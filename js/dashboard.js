@@ -33,29 +33,64 @@ class DashboardApp {
   }
 
   async start() {
-    const { data: { session } } = await this.#client.auth.getSession();
-    if (!session) {
-      location.replace('login.html');
-      return;
-    }
-
-    this.#user = session.user;
     try {
-      this.#account = await this.#auth.getAccount(this.#user);
+      this.#setStartupStatus('Checking login session...');
+      const sessionResult = await withTimeout(
+        this.#client.auth.getSession(),
+        'The session check timed out. Refresh the page and check your connection.',
+      );
+      const session = sessionResult?.data?.session;
+      if (!session) {
+        location.replace('login.html');
+        return;
+      }
+
+      this.#user = session.user;
+      this.#setStartupStatus('Loading account...');
+      this.#account = await withTimeout(
+        this.#auth.getAccount(this.#user),
+        'Loading your account took too long. Check your Supabase connection and profile permissions.',
+      );
       this.#role = this.#account.role;
       if (this.#role === 'staff' && this.#account.status !== 'approved') {
         await this.#auth.signOut();
         location.replace(`login.html?message=${this.#account.status === 'declined' ? 'declined' : 'pending'}`);
         return;
       }
+
       this.#setupPage();
       await this.#loadAll();
       this.#subscribe();
       window.addEventListener('beforeunload', () => this.#channels.forEach((channel) => this.#client.removeChannel(channel)));
     } catch (error) {
-      await this.#auth.signOut().catch(() => {});
-      location.replace(`login.html?error=${encodeURIComponent(error.message || 'Could not load your account')}`);
+      console.error('SCsystem dashboard startup failed:', error);
+      this.#showStartupError(error);
     }
+  }
+
+  #setStartupStatus(message) {
+    const badge = document.getElementById('roleBadge');
+    if (badge) badge.textContent = message;
+  }
+
+  #showStartupError(error) {
+    const message = error?.message || 'An unexpected error stopped the dashboard from loading.';
+    this.#setStartupStatus('Connection issue');
+    const sideName = document.getElementById('sideName');
+    const sideEmail = document.getElementById('sideEmail');
+    const welcome = document.getElementById('welcomeTitle');
+    if (sideName) sideName.textContent = 'Dashboard unavailable';
+    if (sideEmail) sideEmail.textContent = 'Please check the connection';
+    if (welcome) welcome.textContent = 'We could not load SCsystem';
+
+    const card = `<div class="loading-card"><strong>SCsystem could not finish loading</strong><p>${escapeHtml(message)}</p><p>Check your internet connection and Supabase project settings, then try again.</p><button class="btn btn-primary" type="button" data-retry-dashboard>Try again</button> <a class="btn btn-secondary" href="login.html">Back to login</a></div>`;
+    ['overviewContent', 'profileContent', 'busContent', 'announcementsContent', 'questsContent', 'staffRequestsContent'].forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) element.innerHTML = card;
+    });
+    document.querySelectorAll('[data-retry-dashboard]').forEach((button) => {
+      button.addEventListener('click', () => location.reload());
+    });
   }
 
   #setupPage() {
@@ -83,11 +118,21 @@ class DashboardApp {
   }
 
   async #loadAll() {
-    const tasks = [this.#refreshProfile(), this.#refreshBuses(), this.#refreshAnnouncements(), this.#refreshQuests()];
-    if (this.#role === 'admin') tasks.push(this.#refreshStaffRequests());
-    const results = await Promise.allSettled(tasks);
+    const tasks = [
+      ['profile', () => this.#refreshProfile()],
+      ['bus status', () => this.#refreshBuses()],
+      ['announcements', () => this.#refreshAnnouncements()],
+      ['quests', () => this.#refreshQuests()],
+    ];
+    if (this.#role === 'admin') tasks.push(['staff requests', () => this.#refreshStaffRequests()]);
+    const results = await Promise.allSettled(tasks.map(([label, task]) =>
+      withTimeout(task(), `Loading ${label} timed out. Check the matching Supabase table and its RLS policies.`)
+    ));
     const failed = results.filter((item) => item.status === 'rejected');
-    if (failed.length) this.#notify('Some content could not be loaded. Check your Supabase table permissions and try refreshing.', 'error');
+    if (failed.length) {
+      console.error('SCsystem data loading errors:', failed.map((item) => item.reason));
+      this.#notify(`${failed.length} section(s) could not load. Check your connection and Supabase table permissions.`, 'error');
+    }
     this.#renderAll();
   }
 
@@ -685,10 +730,34 @@ class DashboardApp {
   }
 }
 
+function withTimeout(promise, message, milliseconds = 12000) {
+  let timer;
+  return Promise.race([
+    Promise.resolve(promise),
+    new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error(message)), milliseconds);
+    }),
+  ]).finally(() => clearTimeout(timer));
+}
+
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 }
 
 function escapeAttr(value) { return escapeHtml(value); }
 
-new DashboardApp().start();
+try {
+  new DashboardApp().start().catch((error) => {
+    console.error('SCsystem dashboard could not start:', error);
+    const welcome = document.getElementById('welcomeTitle');
+    const content = document.getElementById('overviewContent');
+    if (welcome) welcome.textContent = 'We could not load SCsystem';
+    if (content) content.innerHTML = `<div class="loading-card"><strong>SCsystem could not start</strong><p>${escapeHtml(error?.message || 'An unexpected error occurred.')}</p><button class="btn btn-primary" type="button" onclick="location.reload()">Try again</button> <a class="btn btn-secondary" href="login.html">Back to login</a></div>`;
+  });
+} catch (error) {
+  console.error('SCsystem dashboard initialization failed:', error);
+  const welcome = document.getElementById('welcomeTitle');
+  const content = document.getElementById('overviewContent');
+  if (welcome) welcome.textContent = 'We could not load SCsystem';
+  if (content) content.innerHTML = `<div class="loading-card"><strong>SCsystem could not start</strong><p>${escapeHtml(error?.message || 'An unexpected error occurred.')}</p><button class="btn btn-primary" type="button" onclick="location.reload()">Try again</button> <a class="btn btn-secondary" href="login.html">Back to login</a></div>`;
+}
