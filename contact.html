@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us | SCsystem</title>
+  <script>
+    (function () {
+      try {
+        var savedTheme = localStorage.getItem('scsystem-theme');
+        var preferredTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme || preferredTheme);
+      } catch (error) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/about-contact.css">
+</head>
+<body class="dashboard-body info-page-body">
+  <header class="app-topbar">
+    <a class="app-brand" href="dashboard.html"><span>SC</span>system</a>
+    <div class="top-actions">
+      <button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch theme" title="Switch theme">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+      </button>
+      <a class="btn btn-secondary info-back-btn" href="dashboard.html">← Back to Dashboard</a>
+    </div>
+  </header>
+
+  <main class="info-main contact-main">
+    <div class="info-heading">
+      <p class="eyebrow">WE WOULD LOVE TO HEAR FROM YOU</p>
+      <h1>Contact Us</h1>
+      <p class="info-subtitle">Reach out through either of our Facebook profiles.</p>
+    </div>
+
+    <section class="info-card contact-card" aria-label="Facebook contacts">
+      <a class="facebook-contact" href="https://www.facebook.com/andrei.jh.2025" target="_blank" rel="noopener noreferrer" aria-label="Open Andrei JH's Facebook profile in a new tab">
+        <span class="facebook-logo" aria-hidden="true">
+          <svg viewBox="0 0 48 48" role="img" focusable="false"><circle cx="24" cy="24" r="24" fill="#1877F2"/><path d="M27.2 40V26.1h4.7l.7-5.4h-5.4v-3.4c0-1.6.5-2.7 2.7-2.7h2.9V9.8c-.5-.1-2.2-.2-4.1-.2-4.1 0-6.9 2.5-6.9 7v4.1h-4.6v5.4h4.6V40h5.4z" fill="#fff"/></svg>
+        </span>
+        <span class="facebook-copy"><strong>Andrei JH</strong><small>Open Facebook profile</small></span>
+        <span class="facebook-arrow" aria-hidden="true">↗</span>
+      </a>
+
+      <a class="facebook-contact" href="https://www.facebook.com/zenaida.caduyac.subisa#" target="_blank" rel="noopener noreferrer" aria-label="Open Zenaida Caduyac's Facebook profile in a new tab">
+        <span class="facebook-logo" aria-hidden="true">
+          <svg viewBox="0 0 48 48" role="img" focusable="false"><circle cx="24" cy="24" r="24" fill="#1877F2"/><path d="M27.2 40V26.1h4.7l.7-5.4h-5.4v-3.4c0-1.6.5-2.7 2.7-2.7h2.9V9.8c-.5-.1-2.2-.2-4.1-.2-4.1 0-6.9 2.5-6.9 7v4.1h-4.6v5.4h4.6V40h5.4z" fill="#fff"/></svg>
+        </span>
+        <span class="facebook-copy"><strong>Zenaida Caduyac</strong><small>Open Facebook profile</small></span>
+        <span class="facebook-arrow" aria-hidden="true">↗</span>
+      </a>
+      <p class="contact-note">The links above open Facebook in a new tab.</p>
+    </section>
+
+    <footer class="info-footer">SCsystem <span>•</span> Campus services and engagement</footer>
+  </main>
+
+  <script>
+    (function () {
+      var button = document.getElementById('themeToggle');
+      if (!button) return;
+      button.addEventListener('click', function () {
+        var current = document.documentElement.getAttribute('data-theme') || 'light';
+        var next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem('scsystem-theme', next); } catch (error) { /* Theme still works for this page. */ }
+        button.setAttribute('aria-label', 'Switch to ' + (next === 'dark' ? 'light' : 'dark') + ' mode');
+        button.setAttribute('title', 'Switch to ' + (next === 'dark' ? 'light' : 'dark') + ' mode');
+      });
+    })();
+  </script>
+</body>
+</html>
