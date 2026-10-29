@@ -10,6 +10,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/dashboard.css">
+  <style>
+    /* Keep the About Us and Contact Us links visually consistent with sidebar buttons. */
+    .side-nav a.nav-link { text-decoration: none; }
+  </style>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
 </head>
 <body class="dashboard-body">
@@ -39,6 +43,8 @@
         <button class="nav-link" data-view-nav="announcements"><span>▤</span> Announcements</button>
         <button class="nav-link" data-view-nav="quests"><span>☑</span> Quests</button>
         <button class="nav-link" data-view-nav="staff-requests" data-role="admin"><span>♙</span> Staff Requests <span id="pendingStaffCount" class="nav-count" hidden>0</span></button>
+        <a class="nav-link info-nav-link" href="about.html"><span>ⓘ</span> About Us</a>
+        <a class="nav-link info-nav-link" href="contact.html"><span>✉</span> Contact Us</a>
       </nav>
       <div class="sidebar-footer"><span class="live-dot"></span> Supabase connected session</div>
     </aside>
