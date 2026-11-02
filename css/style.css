@@ -362,3 +362,19 @@ dialog.modal::backdrop { background: var(--backdrop); }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
 }
+
+
+.role-switch { display: flex; gap: 8px; padding: 5px; margin: 0 0 22px; border: 1px solid var(--border); border-radius: 14px; background: var(--input-bg); }
+.role-choice { flex: 1; padding: 10px 14px; border: 0; border-radius: 10px; background: transparent; color: var(--muted); font: inherit; font-weight: 600; cursor: pointer; }
+.role-choice.active { background: var(--gold); color: var(--on-gold); }
+.signup-card { max-width: 620px; }
+.name-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.field select { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 12px; background: var(--input-bg); color: var(--text); font: inherit; font-size: 0.94rem; }
+.field select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(245, 179, 1, 0.3); }
+.field.has-error select { border-color: var(--danger); }
+.optional { color: var(--muted); font-weight: 400; }
+.footer-links { display: flex; justify-content: center; gap: 20px; margin-bottom: 8px; }
+.footer-links a { color: var(--muted); text-decoration: none; }
+.footer-links a:hover { color: var(--text); }
+.app-download-link { white-space: nowrap; }
+@media (max-width: 640px) { .name-fields { grid-template-columns: 1fr; gap: 0; } .signup-card { padding: 26px 20px; } }

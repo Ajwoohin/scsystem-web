@@ -4,16 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign Up | SCsystem</title>
-  <script>
-    // Sets the saved theme before the page draws, so it never flashes the wrong color.
-    (function () {
-      try {
-        var saved = localStorage.getItem('scsystem-theme');
-        var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
-        document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-      } catch (e) {}
-    })();
-  </script>
+  <script>(function(){try{var s=localStorage.getItem('scsystem-theme');document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));}catch(e){}})();</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -21,91 +12,65 @@
 </head>
 <body>
   <a class="back-link" href="index.html">&larr; Back</a>
-
-  <button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch to dark mode">
+  <button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch theme">
     <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
   </button>
-
   <main class="auth-page">
-    <section class="card auth-card">
-
+    <section class="card auth-card signup-card">
       <div id="formArea">
-        <h1>Create Account</h1>
-        <p class="subtitle">Join SCsystem with your institutional email.</p>
-
+        <h1 id="signupTitle">Student Sign Up</h1>
+        <p class="subtitle" id="signupSubtitle">Create your student account using your SCC institutional email.</p>
+        <p class="switch" id="roleSwitch"></p>
         <form id="signUpForm" novalidate>
-          <div class="field">
-            <label for="fullName">Full Name</label>
-            <input id="fullName" type="text" autocomplete="name">
-            <small class="error" data-error-for="fullName" aria-live="polite"></small>
+          <div class="name-fields">
+            <div class="field"><label for="firstName">First Name</label><input id="firstName" type="text" autocomplete="given-name"><small class="error" data-error-for="firstName" aria-live="polite"></small></div>
+            <div class="field"><label for="middleName">Middle Name <span class="optional">(optional)</span></label><input id="middleName" type="text" autocomplete="additional-name"><small class="error" data-error-for="middleName" aria-live="polite"></small></div>
+            <div class="field"><label for="lastName">Last Name</label><input id="lastName" type="text" autocomplete="family-name"><small class="error" data-error-for="lastName" aria-live="polite"></small></div>
           </div>
-
-          <div class="field">
-            <label for="edp">EDP Number</label>
-            <input id="edp" type="text" inputmode="numeric" autocomplete="off">
-            <small class="hint">Enter 000 to register as faculty or staff.</small>
-            <small class="error" data-error-for="edp" aria-live="polite"></small>
+          <div class="field student-only" data-student-only><label for="course">Course</label>
+            <select id="course">
+  <option value="">Select your course</option>
+  <option value="Bachelor of Science in Information Systems">BS Information Systems (BSIS)</option>
+  <option value="Bachelor of Science in Information Technology">BS Information Technology (BSIT)</option>
+  <option value="Bachelor of Science in Computer Science">BS Computer Science (BSCS)</option>
+  <option value="Bachelor of Library and Information Science">BS Library and Information Science (BLIS)</option>
+  <option value="Bachelor of Science in Computer Engineering">BS Computer Engineering</option>
+  <option value="Bachelor of Science in Business Administration">BS Business Administration</option>
+  <option value="Bachelor of Science in Accountancy">BS Accountancy</option>
+  <option value="Bachelor of Science in Accounting Information Systems">BS Accounting Information Systems</option>
+  <option value="Bachelor of Science in Criminology">BS Criminology</option>
+  <option value="Bachelor of Science in Psychology">BS Psychology</option>
+  <option value="Bachelor of Science in Nursing">BS Nursing</option>
+  <option value="Bachelor of Science in Hospitality Management">BS Hospitality Management</option>
+  <option value="Bachelor of Science in Tourism Management">BS Tourism Management</option>
+  <option value="Bachelor of Elementary Education">Bachelor of Elementary Education</option>
+  <option value="Bachelor of Secondary Education">Bachelor of Secondary Education</option>
+  <option value="Bachelor of Science in Civil Engineering">BS Civil Engineering</option>
+  <option value="Bachelor of Science in Electrical Engineering">BS Electrical Engineering</option>
+  <option value="Bachelor of Science in Mechanical Engineering">BS Mechanical Engineering</option>
+  <option value="Bachelor of Science in Biology">BS Biology</option>
+  <option value="Bachelor of Science in Mathematics">BS Mathematics</option>
+  <option value="Bachelor of Arts in Communication">BA Communication</option>
+  <option value="Bachelor of Arts in Political Science">BA Political Science</option>
+  <option value="Bachelor of Arts in English Language Studies">BA English Language Studies</option>
+  <option value="Bachelor of Science in Agriculture">BS Agriculture</option>
+  <option value="Bachelor of Science in Fisheries">BS Fisheries</option>
+</select><small class="error" data-error-for="course" aria-live="polite"></small>
           </div>
-
-          <div class="field">
-            <label for="email">Institutional Email (@sccpag.edu.ph)</label>
-            <input id="email" type="email" autocomplete="email" placeholder="name@sccpag.edu.ph">
-            <small class="hint" id="emailHint">Students must use their @sccpag.edu.ph institutional email.</small>
-            <small class="error" data-error-for="email" aria-live="polite"></small>
-          </div>
-
-          <div class="field">
-            <label for="password">Password</label>
-            <div class="input-wrap">
-              <input id="password" type="password" autocomplete="new-password">
-              <button id="togglePassword" class="eye" type="button" aria-label="Show password" aria-pressed="false">
-                <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-              </button>
-            </div>
-            <small class="hint">Must be 8+ characters with at least 1 special character</small>
-            <small class="error" data-error-for="password" aria-live="polite"></small>
-          </div>
-
-          <div class="field">
-            <label for="confirmPassword">Confirm Password</label>
-            <div class="input-wrap">
-              <input id="confirmPassword" type="password" autocomplete="new-password">
-              <button id="toggleConfirm" class="eye" type="button" aria-label="Show password" aria-pressed="false">
-                <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-              </button>
-            </div>
-            <small class="error" data-error-for="confirmPassword" aria-live="polite"></small>
-          </div>
-
-          <div class="agree-row">
-            <input id="agree" type="checkbox">
-            <label for="agree">I agree to the</label>
-            <button id="termsLink" class="link-btn accent" type="button">Terms and Conditions</button>
-          </div>
-
+          <div class="field student-only" data-student-only><label for="edp">EDP Number</label><input id="edp" type="text" autocomplete="off" placeholder="Enter your EDP number"><small class="error" data-error-for="edp" aria-live="polite"></small></div>
+          <div class="field"><label id="emailLabel" for="email">Institutional Email (@sccpag.edu.ph)</label><input id="email" type="email" autocomplete="email" placeholder="name@sccpag.edu.ph"><small class="hint" id="emailHint">Students must use their SCC institutional email.</small><small class="error" data-error-for="email" aria-live="polite"></small></div>
+          <div class="field"><label for="password">Password</label><div class="input-wrap"><input id="password" type="password" autocomplete="new-password"><button id="togglePassword" class="eye" type="button" aria-label="Show password" aria-pressed="false"><svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button></div><small class="hint">At least 8 characters and 1 special character.</small><small class="error" data-error-for="password" aria-live="polite"></small></div>
+          <div class="field"><label for="confirmPassword">Confirm Password</label><div class="input-wrap"><input id="confirmPassword" type="password" autocomplete="new-password"><button id="toggleConfirm" class="eye" type="button" aria-label="Show password" aria-pressed="false"><svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button></div><small class="error" data-error-for="confirmPassword" aria-live="polite"></small></div>
+          <div class="agree-row"><input id="agree" type="checkbox"><label for="agree">I agree to the</label><button id="termsLink" class="link-btn accent" type="button">Terms and Conditions</button></div>
           <p id="formMessage" class="form-message" role="alert" hidden></p>
-
-          <button id="submitBtn" class="btn btn-primary btn-block" type="submit" disabled>Create Account</button>
+          <button id="submitBtn" class="btn btn-primary btn-block" type="submit" disabled>Create Student Account</button>
         </form>
-
         <p class="switch">Already have an account? <a href="login.html">Log in</a></p>
       </div>
-
-      <div id="successPanel" class="success-panel" hidden>
-        <div class="success-badge">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
-        </div>
-        <h2 id="successTitle">Verify your email</h2>
-        <p id="successText"></p>
-        <a class="btn btn-primary" href="login.html">Go to Log In</a>
-      </div>
-
+      <div id="successPanel" class="success-panel" hidden><div class="success-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><h2 id="successTitle">Verify your email</h2><p id="successText"></p><a class="btn btn-primary" href="login.html">Go to Log In</a></div>
     </section>
   </main>
-
   <dialog id="termsDialog" class="modal" aria-labelledby="termsTitle">
     <div class="modal-card">
       <header class="modal-header">

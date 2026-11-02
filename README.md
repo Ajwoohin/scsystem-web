@@ -1,110 +1,47 @@
-# SCsystem Website
+# SCsystem Website – Version 3
 
-Static website for SCsystem, connected to the same Supabase project as the Flutter app.
+A static GitHub Pages frontend connected to the existing Supabase project. The authenticated dashboard uses small ES-module page classes and the existing `students`, `staff`, buses, announcements, quests, and points structures.
 
-## Quick start
+## Run locally
 
-Open the website folder in VS Code and run it with Live Server (or another local web server). Do not open the HTML pages through `file://`, because the site uses JavaScript modules.
+Use VS Code Live Server or another local HTTP server. Do not open the HTML files with `file://`; the website uses JavaScript ES modules.
 
-## Add the Flutter Android app download
+## Supabase configuration
 
-The landing page and dashboard both have a **Download app now!** button. Both buttons download this relative path: `downloads/SCsystem.apk`. The website ZIP does not include an APK because the Flutter project must build the real app first. The download button will work after you copy the built APK into the published website's `downloads` folder. Keep that folder next to `index.html`.
+`js/config.js` contains the existing Supabase project URL and publishable key. Keep the service-role key and database password out of browser code and out of GitHub.
 
-### 1. Build a release APK
+Before database changes, run `supabase/02_schema_audit_queries.sql` in the Supabase SQL Editor and follow `SUPABASE_DATABASE_GUIDE.md`. The additive migration is `supabase/01_additive_registration_and_edp_lookup.sql`. It is not applied automatically. Confirm the existing profile-creation trigger and trigger order before running it.
 
-Open a terminal in your Flutter app project folder (the folder that contains `pubspec.yaml`). In PowerShell or the VS Code terminal, run:
+## Registration
 
-```powershell
-flutter doctor
-flutter pub get
-flutter build apk --release
-```
+- Student signup collects first name, optional middle name, last name, a fixed course dropdown, EDP number, SCC institutional email, password, confirmation, and Terms acceptance.
+- Teacher signup has its own landing-page button and collects separate name fields, personal Gmail, password, confirmation, and Terms acceptance.
+- Teacher accounts are tagged as `staff` and set to pending by the optional database trigger until an administrator approves them. The website enforces Gmail in its form; the shared database does not impose that domain globally because the existing APK teacher-signup path allows other valid email domains.
+- `full_name` is still sent in signup metadata and must remain in the database for the APK.
 
-When the build succeeds, the APK is normally at:
+## Dashboard features
 
-```text
-build\app\outputs\flutter-apk\app-release.apk
-```
+- Role-aware navigation for students, approved teachers, and administrators
+- Student profile, bio, and existing `profile-photos` upload bucket
+- EDP QR display and manual EDP recipient lookup for point transfers
+- Live bus status and approved teacher/admin bus controls
+- Announcements, image uploads, reactions, and comments
+- Quests, acceptances, proof uploads, review, rewards, and history
+- Student point transfers, teacher rewards, administrator awards, staff distribution, and history
+- Teacher approval/decline by an administrator
 
-To open that folder and see the generated APK in File Explorer, run this from the Flutter project folder:
+The web dashboard uses `quest_acceptances`, matching Version 1 and the APK. The APK's own QR flow continues to use its existing `qr_code_id` field; the website's QR display is EDP-based. The website does not add a camera scanner.
 
-```powershell
-explorer .\build\app\outputs\flutter-apk\
-```
+## APK download
 
-The normal `flutter build apk --release` command makes one APK that supports the common Android architectures. It is usually easier for a direct website download than split APKs. Flutter's official Android release guide: https://docs.flutter.dev/deployment/android
+The Download App Now links open the supplied Google Drive URL in a new tab. No APK binary is included in the website package.
 
-### 2. Copy the APK into the website
+## GitHub Pages
 
-Replace the example paths below with the real folders on your computer. `$WebsiteRepo` must be the root folder published by GitHub Pages—the folder that contains `index.html` (not just an outer ZIP extraction folder).
+Extract the ZIP and upload the contents of this folder to the GitHub Pages repository root (or the configured publishing folder). The ZIP intentionally excludes `.git`, `.vscode`, `node_modules`, APK binaries, and private database credentials.
 
-```powershell
-$FlutterProject = "C:\path\to\your\flutter-project"
-$WebsiteRepo = "C:\path\to\your\website-repository"
+See `SUPABASE_DATABASE_GUIDE.md` for backups, audit steps, safe migration instructions, and the structures that should remain untouched for APK compatibility.
 
-New-Item -ItemType Directory -Force "$WebsiteRepo\downloads" | Out-Null
-Copy-Item "$FlutterProject\build\app\outputs\flutter-apk\app-release.apk" "$WebsiteRepo\downloads\SCsystem.apk" -Force
-```
+## Windows filename compatibility
 
-If the commands are being run from inside the Flutter project, you can still use the absolute `$WebsiteRepo` path as shown. Check that the copied file exists:
-
-```powershell
-Get-Item "$WebsiteRepo\downloads\SCsystem.apk" | Select-Object FullName, Length
-```
-
-### 3. Test before publishing
-
-1. Start the website locally using VS Code Live Server.
-2. Click **Download app now!** on the landing page.
-3. Confirm that a file named `SCsystem.apk` downloads and is not a 404 page or an HTML file.
-4. On an Android phone, transfer/open the APK and install it. Android may ask permission to install apps from the browser or file manager. Only install APKs you trust.
-5. After GitHub Pages deploys, test the button again on the live website URL.
-
-### 4. Commit and push the website change
-
-Open a terminal in the local website Git repository—the folder containing `index.html` and the `.git` folder. Make sure the APK has already been copied into `downloads/SCsystem.apk`. Then run:
-
-```powershell
-git status
-git add index.html dashboard.html css/style.css css/dashboard.css README.md downloads/README.md downloads/SCsystem.apk
-git commit -m "Add SCsystem Android app download"
-git push
-```
-
-If Git says there is no upstream branch, check your branch with `git branch --show-current`, then push it with `git push -u origin YOUR-BRANCH-NAME` (replace the example name). If GitHub Pages deploys from a particular branch or folder, make sure these files are in that published location. Wait for the Pages deployment to finish, then test the live download URL.
-
-**GitHub file-size note:** GitHub rejects normal Git files larger than 100 MiB. If your APK is bigger than that, use a release/download hosting location and point the button at its public APK URL instead of committing the APK into the website repository.
-
-### Updating the APK later
-
-Rebuild the APK after changing the Flutter app, copy the new `app-release.apk` over `downloads/SCsystem.apk`, and commit/push again using the commands above. Keep the Android application ID and signing key consistent so existing users can install app updates over their current copy.
-
-## Supabase setup
-
-`js/config.js` contains the project's URL and publishable key. Keep this as the public/publishable key; never place a Supabase service-role key in browser code.
-
-The website uses the same tables, storage buckets, and RPC functions referenced by the Flutter source:
-
-- Tables: `students`, `staff`, `buses`, `announcements`, `announcement_reactions`, `announcement_comments`, `quests`, `quest_acceptances`
-- Storage buckets: `profile-photos`, `announcement-images`, `quest-proofs`
-- RPC functions: `award_points`, `staff_reward_student`, `recompute_quest_completion`
-
-The database policies must allow each signed-in role the same operations it already uses in the mobile app. Realtime must be enabled for the tables whose changes should appear live. The staff registration flow relies on the existing Supabase auth trigger creating a `staff` row with a pending status from user metadata (`role: staff`); student registration similarly relies on the trigger creating the `students` row.
-
-## Accounts
-
-- Student sign-up requires an `@sccpag.edu.ph` email.
-- Entering `000` as the EDP number switches sign-up to staff registration; staff accounts require administration approval.
-- Administration sign-in accepts the administrator email found in the Flutter app. Supabase Auth validates the password; the password is not hardcoded into the website.
-
-## Main website features
-
-- Sign-up and login using Supabase Auth
-- Role-aware home/profile dashboard
-- Student bio and profile-photo updates, and student QR display
-- Live bus status; administrators can update statuses
-- Live announcements with optional images, expiration, reactions, and comments
-- Quests, acceptance, image proof submission, and staff/administrator review using the same point-award RPC functions as the app
-- Administrator staff-request approval
-
-If an action is denied, check the relevant Supabase RLS or Storage policy before changing the frontend. Do not resolve permission problems by exposing a service-role key.
+The dashboard controller and dashboard startup entry point use distinct filenames: `js/DashboardApp.js` and `js/dashboard-entry.js`. Do not rename them to names that differ only by capitalization; Windows filesystems commonly treat those as the same path.
